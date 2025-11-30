@@ -7,6 +7,7 @@ import com.github.dgaponov99.practicum.myblog.exception.ImageNotFoundException;
 import com.github.dgaponov99.practicum.myblog.exception.PostNotFoundException;
 import com.github.dgaponov99.practicum.myblog.mapper.PostMapper;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Post;
+import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -23,12 +24,12 @@ import java.util.Set;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final PostMapper postMapper;
-    private final CommentService commentService;
     private final PostImageService postImageService;
 
     public PostPageDTO searchPosts(String title, Set<String> tags, int pageNumber, int pageSize) {
-        var postDTOs = postRepository.findAll(title, tags, pageNumber, pageSize).stream()
+        var postDTOs = postRepository.findAll(title, tags, pageSize, (pageNumber - 1) * pageSize).stream()
                 .map(this::toDto)
                 .toList();
         var postCount = postRepository.count(title, tags);
@@ -87,8 +88,7 @@ public class PostService {
         }
     }
 
-    public void deletePost(long id) throws PostNotFoundException {
-        commentService.deleteByPostId(id);
+    public void deletePost(long id) {
         postRepository.deleteById(id);
     }
 
@@ -98,11 +98,7 @@ public class PostService {
 
     private PostDTO toDto(Post post) {
         var postDto = postMapper.toDTO(post);
-        try {
-            postDto.setCommentsCount(commentService.countByPostId(post.getId()));
-        } catch (PostNotFoundException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        postDto.setCommentsCount(commentRepository.countByPostId(post.getId()));
         return postDto;
     }
 }

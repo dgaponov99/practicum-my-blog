@@ -19,7 +19,7 @@
         </init-param>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>com.github.dgaponov99.practicum.myblog.WebConfiguration</param-value>
+            <param-value>com.github.dgaponov99.practicum.myblog.AppConfiguration</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
 

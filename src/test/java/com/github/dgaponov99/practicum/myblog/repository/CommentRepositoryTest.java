@@ -1,6 +1,5 @@
-package com.github.dgaponov99.practicum.myblog;
+package com.github.dgaponov99.practicum.myblog.repository;
 
-import com.github.dgaponov99.practicum.myblog.configuration.DataSourceConfiguration;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Comment;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {DataSourceConfiguration.class})
+@SpringJUnitConfig(classes = {RepositoryTestConfig.class})
 public class CommentRepositoryTest {
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17");

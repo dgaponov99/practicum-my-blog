@@ -1,6 +1,5 @@
-package com.github.dgaponov99.practicum.myblog;
+package com.github.dgaponov99.practicum.myblog.repository;
 
-import com.github.dgaponov99.practicum.myblog.configuration.DataSourceConfiguration;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Post;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.PostRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,10 +20,12 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {DataSourceConfiguration.class})
+@SpringJUnitConfig(classes = {RepositoryTestConfig.class})
 public class PostRepositoryTest {
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17");
@@ -84,13 +85,16 @@ public class PostRepositoryTest {
             "100, 10, 100"
     })
     void search_allPosts(int totalCount, int size, int offset) {
-        var postIds = new TreeSet<Long>();
-        for (int i = 0; i < totalCount; i++) {
-            var postId = insertPost("Заголовок %s".formatted(i), "Тело %s".formatted(i), i, null, false);
-            insertPostTag(postId, "tag1");
-            insertPostTag(postId, "tag2");
-            postIds.add(postId);
-        }
+        var postIds = IntStream.range(0, totalCount)
+                .parallel()
+                .mapToLong(i -> {
+                    long postId = insertPost("Заголовок %s".formatted(i), "Тело %s".formatted(i), i, null, false);
+                    insertPostTag(postId, "tag1");
+                    insertPostTag(postId, "tag2");
+                    return postId;
+                })
+                .boxed()
+                .collect(Collectors.toCollection(TreeSet::new));
         var posts = postRepository.findAll(null, Collections.emptySet(), size, offset);
         var count = postRepository.count(null, Collections.emptySet());
         assertEquals(totalCount, count);

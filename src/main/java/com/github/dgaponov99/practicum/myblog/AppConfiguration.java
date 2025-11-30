@@ -7,5 +7,5 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @ComponentScan(basePackages = "com.github.dgaponov99.practicum.myblog")
 @PropertySource("classpath:application.properties")
-public class WebConfiguration {
+public class AppConfiguration {
 }
