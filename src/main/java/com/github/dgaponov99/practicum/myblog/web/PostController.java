@@ -12,6 +12,7 @@ import com.github.dgaponov99.practicum.myblog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +32,9 @@ public class PostController {
 
     @GetMapping()
     public ResponseEntity<PostPageDTO> searchPosts(
-            @RequestParam String search,
-            @RequestParam(defaultValue = "1") int pageNumber,
-            @RequestParam(defaultValue = "10") int pageSize) {
+            @RequestParam(name = "search", defaultValue = "") String search,
+            @RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
         var title = new StringBuilder();
         var tags = new HashSet<String>();
         if (StringUtils.hasText(search)) {
@@ -49,8 +50,8 @@ public class PostController {
         return ResponseEntity.ok(postService.searchPosts(title.toString(), tags, pageNumber, pageSize));
     }
 
-    @GetMapping(value = "/{postId}")
-    public ResponseEntity<PostDTO> getPost(@PathVariable long postId) {
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getPost(@PathVariable("postId") long postId) {
         return ResponseEntity.of(postService.getPost(postId));
     }
 
@@ -60,7 +61,7 @@ public class PostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<PostDTO> editPost(@PathVariable long postId,
+    public ResponseEntity<PostDTO> editPost(@PathVariable("postId") long postId,
                                             @RequestBody @Valid PostDataDTO postDataDTO) {
         try {
             return ResponseEntity.ok(postService.editPost(postId, postDataDTO));
@@ -70,13 +71,13 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable long postId) {
+    public ResponseEntity<Void> deletePost(@PathVariable("postId") long postId) {
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{postId}/likes")
-    public ResponseEntity<Integer> likePost(@PathVariable long postId) {
+    public ResponseEntity<Integer> likePost(@PathVariable("postId") long postId) {
         try {
             return ResponseEntity.ok(postService.incrementLikes(postId));
         } catch (PostNotFoundException e) {
@@ -84,9 +85,9 @@ public class PostController {
         }
     }
 
-    @PutMapping("/{postId}/image")
-    public ResponseEntity<Void> uploadImage(@PathVariable long postId,
-                                            @RequestBody MultipartFile image) {
+    @PutMapping(value = "/{postId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> uploadImage(@PathVariable("postId") long postId,
+                                            @RequestParam("image") MultipartFile image) {
         try {
             postService.uploadImage(postId, image);
             return ResponseEntity.ok().build();
@@ -96,7 +97,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/image")
-    public ResponseEntity<Resource> downloadImage(@PathVariable long postId) {
+    public ResponseEntity<Resource> downloadImage(@PathVariable("postId") long postId) {
         try {
             return postService.getImage(postId).map(ResponseEntity::ok)
                     .orElse(ResponseEntity.noContent().build());
@@ -106,7 +107,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable long postId) {
+    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("postId") long postId) {
         try {
             return ResponseEntity.ok(commentService.getByPostId(postId));
         } catch (PostNotFoundException e) {
@@ -115,8 +116,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentDTO> getComment(@PathVariable long postId,
-                                                 @PathVariable long commentId) {
+    public ResponseEntity<CommentDTO> getComment(@PathVariable("postId") long postId,
+                                                 @PathVariable("commentId") long commentId) {
         var comment = commentService.getComment(commentId);
         if (comment.isPresent()) {
             if (comment.get().getPostId() == postId) {
@@ -130,7 +131,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<CommentDTO> createComment(@PathVariable long postId,
+    public ResponseEntity<CommentDTO> createComment(@PathVariable("postId") long postId,
                                                     @RequestBody @Valid CommentDataDTO commentData) {
         try {
             return ResponseEntity.ok(commentService.createComment(postId, commentData));
@@ -140,8 +141,8 @@ public class PostController {
     }
 
     @PutMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentDTO> editComment(@PathVariable long postId,
-                                                  @PathVariable long commentId,
+    public ResponseEntity<CommentDTO> editComment(@PathVariable("postId") long postId,
+                                                  @PathVariable("commentId") long commentId,
                                                   @RequestBody @Valid CommentDataDTO commentData) {
         var comment = commentService.getComment(commentId).orElse(null);
         if (comment != null && comment.getPostId() != postId) {
@@ -155,8 +156,8 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable long postId,
-                                              @PathVariable long commentId) {
+    public ResponseEntity<Void> deleteComment(@PathVariable("postId") long postId,
+                                              @PathVariable("commentId") long commentId) {
         var comment = commentService.getComment(commentId).orElse(null);
         if (comment != null && comment.getPostId() != postId) {
             return ResponseEntity.notFound().build();
