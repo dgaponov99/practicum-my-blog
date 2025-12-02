@@ -11,6 +11,7 @@ import com.github.dgaponov99.practicum.myblog.service.CommentService;
 import com.github.dgaponov99.practicum.myblog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,8 @@ public class PostController {
     private final PostService postService;
     private final CommentService commentService;
 
+    @Value("${posts.search.text.length:128}")
+    private int searchTextLength;
 
     @GetMapping()
     public ResponseEntity<PostPageDTO> searchPosts(
@@ -47,7 +50,13 @@ public class PostController {
             }
         }
         title = new StringBuilder(title.toString().trim());
-        return ResponseEntity.ok(postService.searchPosts(title.toString(), tags, pageNumber, pageSize));
+        var postPage = postService.searchPosts(title.toString(), tags, pageNumber, pageSize);
+        postPage.getPosts().forEach(post -> {
+            if (post.getText().length() > searchTextLength) {
+                post.setText(post.getText().substring(0, searchTextLength) + "...");
+            }
+        });
+        return ResponseEntity.ok(postPage);
     }
 
     @GetMapping("/{postId}")
@@ -76,10 +85,10 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{postId}/likes")
-    public ResponseEntity<Integer> likePost(@PathVariable("postId") long postId) {
+    @PostMapping(value = "/{postId}/likes", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> likePost(@PathVariable("postId") long postId) {
         try {
-            return ResponseEntity.ok(postService.incrementLikes(postId));
+            return ResponseEntity.ok(String.valueOf(postService.incrementLikes(postId)));
         } catch (PostNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -96,11 +105,11 @@ public class PostController {
         }
     }
 
-    @GetMapping("/{postId}/image")
+    @GetMapping(value = "/{postId}/image", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> downloadImage(@PathVariable("postId") long postId) {
         try {
             return postService.getImage(postId).map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.noContent().build());
+                    .orElse(ResponseEntity.notFound().build());
         } catch (PostNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
