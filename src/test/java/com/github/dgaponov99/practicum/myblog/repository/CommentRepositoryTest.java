@@ -1,17 +1,15 @@
 package com.github.dgaponov99.practicum.myblog.repository;
 
+import com.github.dgaponov99.practicum.myblog.PostgresRepositoryTest;
+import com.github.dgaponov99.practicum.myblog.config.RepositoryITConfig;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Comment;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Statement;
 import java.util.HashSet;
@@ -20,23 +18,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {RepositoryTestConfig.class})
-public class CommentRepositoryTest {
-
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17");
-
-    @BeforeAll
-    static void init() {
-        postgres.start();
-    }
-
-    @DynamicPropertySource
-    static void registerPgProps(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.driverClassName", postgres::getDriverClassName);
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+@SpringJUnitConfig(classes = {RepositoryITConfig.class})
+public class CommentRepositoryTest extends PostgresRepositoryTest {
 
     @Autowired
     JdbcTemplate jdbcTemplate;

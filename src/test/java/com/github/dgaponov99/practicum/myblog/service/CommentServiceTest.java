@@ -1,6 +1,7 @@
 package com.github.dgaponov99.practicum.myblog.service;
 
 
+import com.github.dgaponov99.practicum.myblog.config.ServiceTestConfig;
 import com.github.dgaponov99.practicum.myblog.dto.CommentDTO;
 import com.github.dgaponov99.practicum.myblog.dto.data.CommentDataDTO;
 import com.github.dgaponov99.practicum.myblog.exception.CommentNotFoundException;

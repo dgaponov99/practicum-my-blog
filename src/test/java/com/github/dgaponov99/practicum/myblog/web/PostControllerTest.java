@@ -1,5 +1,6 @@
 package com.github.dgaponov99.practicum.myblog.web;
 
+import com.github.dgaponov99.practicum.myblog.config.WebTestConfig;
 import com.github.dgaponov99.practicum.myblog.dto.CommentDTO;
 import com.github.dgaponov99.practicum.myblog.dto.PostDTO;
 import com.github.dgaponov99.practicum.myblog.dto.PostPageDTO;

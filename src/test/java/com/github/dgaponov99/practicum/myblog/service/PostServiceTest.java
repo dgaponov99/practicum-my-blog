@@ -1,6 +1,7 @@
 package com.github.dgaponov99.practicum.myblog.service;
 
 
+import com.github.dgaponov99.practicum.myblog.config.ServiceTestConfig;
 import com.github.dgaponov99.practicum.myblog.dto.PostDTO;
 import com.github.dgaponov99.practicum.myblog.dto.data.PostDataDTO;
 import com.github.dgaponov99.practicum.myblog.exception.PostNotFoundException;

@@ -1,7 +1,8 @@
-package com.github.dgaponov99.practicum.myblog.service;
+package com.github.dgaponov99.practicum.myblog.config;
 
 import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.PostRepository;
+import com.github.dgaponov99.practicum.myblog.service.PostImageService;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

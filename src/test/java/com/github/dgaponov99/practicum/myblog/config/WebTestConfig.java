@@ -1,4 +1,4 @@
-package com.github.dgaponov99.practicum.myblog.web;
+package com.github.dgaponov99.practicum.myblog.config;
 
 import com.github.dgaponov99.practicum.myblog.configuration.ValidationConfiguration;
 import com.github.dgaponov99.practicum.myblog.configuration.WebConfiguration;

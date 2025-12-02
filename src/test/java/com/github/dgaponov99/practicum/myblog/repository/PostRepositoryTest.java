@@ -1,8 +1,9 @@
 package com.github.dgaponov99.practicum.myblog.repository;
 
+import com.github.dgaponov99.practicum.myblog.PostgresRepositoryTest;
+import com.github.dgaponov99.practicum.myblog.config.RepositoryITConfig;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Post;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.PostRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,10 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Statement;
 import java.util.Collections;
@@ -25,23 +23,8 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {RepositoryTestConfig.class})
-public class PostRepositoryTest {
-
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17");
-
-    @BeforeAll
-    static void init() {
-        postgres.start();
-    }
-
-    @DynamicPropertySource
-    static void registerPgProps(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.driverClassName", postgres::getDriverClassName);
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+@SpringJUnitConfig(classes = {RepositoryITConfig.class})
+public class PostRepositoryTest extends PostgresRepositoryTest {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
