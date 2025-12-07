@@ -34,8 +34,8 @@ public class PostServiceTest extends ServiceBaseTest {
         var postList = new ArrayList<Post>(size);
         var postDtoList = new ArrayList<PostDTO>(size);
         for (int i = 1; i <= count; i++) {
-            postList.add(new Post((long) i, "Заголовок " + i, "Текст " + i, i, null, Set.of("tag1", "tag2"), false));
-            postDtoList.add(new PostDTO(i, "Заголовок " + i, "Текст " + i, Set.of("tag1", "tag2"), i, 2));
+            postList.add(new Post((long) i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), i, null, Set.of("tag1", "tag2"), false));
+            postDtoList.add(new PostDTO(i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), Set.of("tag1", "tag2"), i, 2));
         }
 
 
@@ -68,8 +68,8 @@ public class PostServiceTest extends ServiceBaseTest {
         var postList = new ArrayList<Post>(size);
         var postDtoList = new ArrayList<PostDTO>(size);
         for (int i = 1; i <= size; i++) {
-            postList.add(new Post((long) i, "Заголовок " + i, "Текст " + i, i, null, Set.of("tag1", "tag2"), false));
-            postDtoList.add(new PostDTO(i, "Заголовок " + i, "Текст " + i, Set.of("tag1", "tag2"), i, 2));
+            postList.add(new Post((long) i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), i, null, Set.of("tag1", "tag2"), false));
+            postDtoList.add(new PostDTO(i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), Set.of("tag1", "tag2"), i, 2));
         }
 
 
@@ -102,8 +102,8 @@ public class PostServiceTest extends ServiceBaseTest {
         var postList = new ArrayList<Post>(size);
         var postDtoList = new ArrayList<PostDTO>(size);
         for (int i = 1; i < size; i++) {
-            postList.add(new Post((long) i, "Заголовок " + i, "Текст " + i, i, null, Set.of("tag1", "tag2"), false));
-            postDtoList.add(new PostDTO(i, "Заголовок " + i, "Текст " + i, Set.of("tag1", "tag2"), i, 2));
+            postList.add(new Post((long) i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), i, null, Set.of("tag1", "tag2"), false));
+            postDtoList.add(new PostDTO(i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), Set.of("tag1", "tag2"), i, 2));
         }
 
 

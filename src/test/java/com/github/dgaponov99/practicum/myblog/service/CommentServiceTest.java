@@ -76,10 +76,10 @@ public class CommentServiceTest extends ServiceBaseTest {
         var comments = new ArrayList<Comment>(4);
         var expectCommentDTOs = new ArrayList<CommentDTO>(3);
         for (int i = 1; i <= 3; i++) {
-            comments.add(new Comment((long) i, postId, "Комментарий " + i, false));
-            expectCommentDTOs.add(new CommentDTO(i, postId, "Комментарий " + i));
+            comments.add(new Comment((long) i, postId, "Комментарий %d".formatted(i), false));
+            expectCommentDTOs.add(new CommentDTO(i, postId, "Комментарий %d".formatted(i)));
         }
-        comments.add(new Comment(4L, postId, "Комментарий " + 4, true));
+        comments.add(new Comment(4L, postId, "Комментарий %d".formatted(4), true));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(new Post(postId, "Заголовок", "Текст", 0, null, Collections.emptySet(), false)));
         when(commentRepository.findByPostId(anyLong())).thenReturn(comments);
@@ -98,7 +98,7 @@ public class CommentServiceTest extends ServiceBaseTest {
         var postId = 1L;
 
         var comments = new ArrayList<Comment>(1);
-        comments.add(new Comment(4L, postId, "Комментарий " + 4, true));
+        comments.add(new Comment(4L, postId, "Комментарий %d".formatted(4), true));
 
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(new Post(postId, "Заголовок", "Текст", 0, null, Collections.emptySet(), false)));
         when(commentRepository.findByPostId(anyLong())).thenReturn(comments);
