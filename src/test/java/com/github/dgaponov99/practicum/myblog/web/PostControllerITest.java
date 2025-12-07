@@ -1,47 +1,35 @@
 package com.github.dgaponov99.practicum.myblog.web;
 
-import com.github.dgaponov99.practicum.myblog.PostgresRepositoryTest;
-import com.github.dgaponov99.practicum.myblog.config.RepositoryITConfig;
-import com.github.dgaponov99.practicum.myblog.config.ServiceITConfig;
-import com.github.dgaponov99.practicum.myblog.config.WebITConfig;
+import com.github.dgaponov99.practicum.myblog.configuration.TestcontainersConfiguration;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebAppConfiguration
-@ContextHierarchy({
-        @ContextConfiguration(name = "persistence", classes = RepositoryITConfig.class),
-        @ContextConfiguration(name = "service", classes = ServiceITConfig.class),
-        @ContextConfiguration(name = "web", classes = WebITConfig.class)
-})
-@SpringJUnitConfig
-public class PostControllerITest extends PostgresRepositoryTest {
+@SpringBootTest
+@Import(TestcontainersConfiguration.class)
+@AutoConfigureMockMvc
+public class PostControllerITest {
 
-    @Autowired
-    private WebApplicationContext wac;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
         jdbcTemplate.update("truncate table posts, post_tag, comments restart identity cascade;");
     }
 
