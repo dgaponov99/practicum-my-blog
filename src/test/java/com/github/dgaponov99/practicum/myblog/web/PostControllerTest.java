@@ -90,7 +90,7 @@ public class PostControllerTest {
     void getPost_ok() throws Exception {
         when(postService.getPost(anyLong())).thenReturn(Optional.of(new PostDTO(1, "Заголовок", "Текст", Set.of("tag1", "tag2"), 3, 2)));
 
-        mockMvc.perform(get("/api/posts/1"))
+        mockMvc.perform(get("/api/posts/{postId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
@@ -109,7 +109,7 @@ public class PostControllerTest {
     void getPost_notFound() throws Exception {
         when(postService.getPost(anyLong())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/posts/100500"))
+        mockMvc.perform(get("/api/posts/{postId}", 100500))
                 .andExpect(status().isNotFound());
 
         verify(postService, times(1)).getPost(100500);
@@ -153,7 +153,7 @@ public class PostControllerTest {
                   }
                 """;
 
-        mockMvc.perform(post("/api/posts")
+        mockMvc.perform(post("/api/posts/{postId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postDataJson))
                 .andExpect(status().is4xxClientError());
@@ -173,7 +173,7 @@ public class PostControllerTest {
                 """;
         when(postService.editPost(anyLong(), any())).thenReturn(new PostDTO(1L, "Новый заголовок", "Новый текст", Set.of("tag3", "tag4"), 0, 0));
 
-        mockMvc.perform(put("/api/posts/1")
+        mockMvc.perform(put("/api/posts/{postId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postDataJson))
                 .andExpect(status().isOk())
@@ -200,7 +200,7 @@ public class PostControllerTest {
                   }
                 """;
 
-        mockMvc.perform(put("/api/posts/1")
+        mockMvc.perform(put("/api/posts/{postId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postDataJson))
                 .andExpect(status().is4xxClientError());
@@ -220,7 +220,7 @@ public class PostControllerTest {
                 """;
         when(postService.editPost(anyLong(), any())).thenThrow(new PostNotFoundException(100500));
 
-        mockMvc.perform(put("/api/posts/100500")
+        mockMvc.perform(put("/api/posts/{postId}", 100500)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postDataJson))
                 .andExpect(status().isNotFound());
@@ -243,7 +243,7 @@ public class PostControllerTest {
     @Test
     void likePost_ok() throws Exception {
         when(postService.incrementLikes(anyLong())).thenReturn(3);
-        mockMvc.perform(post("/api/posts/1/likes"))
+        mockMvc.perform(post("/api/posts/{postId}/likes", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("3"));
@@ -255,7 +255,7 @@ public class PostControllerTest {
     @Test
     void likePost_notFound() throws Exception {
         when(postService.incrementLikes(anyLong())).thenThrow(new PostNotFoundException(100500));
-        mockMvc.perform(post("/api/posts/100500/likes"))
+        mockMvc.perform(post("/api/posts/{postId}/likes", 100500))
                 .andExpect(status().isNotFound());
 
         verify(postService, times(1)).incrementLikes(100500L);
@@ -269,7 +269,7 @@ public class PostControllerTest {
 
         doNothing().when(postService).uploadImage(anyLong(), any());
 
-        mockMvc.perform(multipart(HttpMethod.PUT, "/api/posts/1/image")
+        mockMvc.perform(multipart(HttpMethod.PUT, "/api/posts/{postId}/image", 1)
                         .file(image))
                 .andExpect(status().isOk());
 
@@ -284,7 +284,7 @@ public class PostControllerTest {
 
         doThrow(new PostNotFoundException(100500L)).when(postService).uploadImage(anyLong(), any());
 
-        mockMvc.perform(multipart(HttpMethod.PUT, "/api/posts/1/image")
+        mockMvc.perform(multipart(HttpMethod.PUT, "/api/posts/{postId}/image", 1)
                         .file(image))
                 .andExpect(status().isNotFound());
 
@@ -299,7 +299,7 @@ public class PostControllerTest {
 
         when(postService.getImage(anyLong())).thenReturn(Optional.of(image));
 
-        mockMvc.perform(get("/api/posts/1/image"))
+        mockMvc.perform(get("/api/posts/{postId}/image", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .andExpect(content().bytes(pngStub));
@@ -312,7 +312,7 @@ public class PostControllerTest {
     void downloadImage_empty() throws Exception {
         when(postService.getImage(anyLong())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/posts/1/image"))
+        mockMvc.perform(get("/api/posts/{postId}/image", 1))
                 .andExpect(status().isNotFound());
 
         verify(postService, times(1)).getImage(1);
@@ -323,7 +323,7 @@ public class PostControllerTest {
     void downloadImage_notPostFound() throws Exception {
         when(postService.getImage(anyLong())).thenThrow(new PostNotFoundException(100500L));
 
-        mockMvc.perform(get("/api/posts/100500/image"))
+        mockMvc.perform(get("/api/posts/{postId}/image", 100500))
                 .andExpect(status().isNotFound());
 
         verify(postService, times(1)).getImage(100500L);
@@ -334,7 +334,7 @@ public class PostControllerTest {
     void getComments_ok() throws Exception {
         when(commentService.getByPostId(anyLong())).thenReturn(List.of(new CommentDTO(1, 1, "Коммент 1"), new CommentDTO(2, 1, "Коммент 2")));
 
-        mockMvc.perform(get("/api/posts/1/comments"))
+        mockMvc.perform(get("/api/posts/{postId}/comments", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(2))
@@ -352,7 +352,7 @@ public class PostControllerTest {
     void getComments_empty() throws Exception {
         when(commentService.getByPostId(anyLong())).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/posts/1/comments"))
+        mockMvc.perform(get("/api/posts/{postId}/comments", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("[]"));
@@ -365,7 +365,7 @@ public class PostControllerTest {
     void getComments_notFound() throws Exception {
         when(commentService.getByPostId(anyLong())).thenThrow(new PostNotFoundException(100500));
 
-        mockMvc.perform(get("/api/posts/100500/comments"))
+        mockMvc.perform(get("/api/posts/{postId}/comments", 100500))
                 .andExpect(status().isNotFound());
 
         verify(commentService, times(1)).getByPostId(100500L);
@@ -376,7 +376,7 @@ public class PostControllerTest {
     void getComment_ok() throws Exception {
         when(commentService.getComment(anyLong())).thenReturn(Optional.of(new CommentDTO(1, 1, "Комментарий")));
 
-        mockMvc.perform(get("/api/posts/1/comments/1"))
+        mockMvc.perform(get("/api/posts/{postId}/comments/{commentId}", 1, 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
@@ -391,7 +391,7 @@ public class PostControllerTest {
     void getComment_postNotFound() throws Exception {
         when(commentService.getComment(anyLong())).thenReturn(Optional.of(new CommentDTO(1, 1, "Комментарий")));
 
-        mockMvc.perform(get("/api/posts/100500/comments/1"))
+        mockMvc.perform(get("/api/posts/{postId}/comments/{commentId}", 100500, 1))
                 .andExpect(status().isNotFound());
 
         verify(commentService, times(1)).getComment(1L);
@@ -402,7 +402,7 @@ public class PostControllerTest {
     void getComment_commentNotFound() throws Exception {
         when(commentService.getComment(anyLong())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/posts/1/comments/100500"))
+        mockMvc.perform(get("/api/posts/{postId}/comments/{commentId}", 1, 100500))
                 .andExpect(status().isNotFound());
 
         verify(commentService, times(1)).getComment(100500L);
@@ -419,7 +419,7 @@ public class PostControllerTest {
                 """;
         when(commentService.createComment(anyLong(), any())).thenReturn(new CommentDTO(1, 1, "Комментарий"));
 
-        mockMvc.perform(post("/api/posts/1/comments")
+        mockMvc.perform(post("/api/posts/{postId}/comments", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().isOk())
@@ -440,7 +440,7 @@ public class PostControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/posts/1/comments")
+        mockMvc.perform(post("/api/posts/{postId}/comments", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().is4xxClientError());
@@ -458,7 +458,7 @@ public class PostControllerTest {
                 """;
         when(commentService.createComment(anyLong(), any())).thenThrow(new PostNotFoundException(100500));
 
-        mockMvc.perform(post("/api/posts/100500/comments")
+        mockMvc.perform(post("/api/posts/{postId}/comments", 100500)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().isNotFound());
@@ -479,7 +479,7 @@ public class PostControllerTest {
         when(commentService.getComment(anyLong())).thenReturn(Optional.of(new CommentDTO(1, 1, "Старый комментарий")));
         when(commentService.editComment(anyLong(), any())).thenReturn(new CommentDTO(1, 1, "Новый комментарий"));
 
-        mockMvc.perform(put("/api/posts/1/comments/1")
+        mockMvc.perform(put("/api/posts/{postId}/comments/{commentId}", 1, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().isOk())
@@ -502,7 +502,7 @@ public class PostControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/posts/1/comments/1")
+        mockMvc.perform(put("/api/posts/{postId}/comments/{commentId}", 1, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().is4xxClientError());
@@ -521,7 +521,7 @@ public class PostControllerTest {
                 """;
         when(commentService.getComment(anyLong())).thenReturn(Optional.of(new CommentDTO(1, 100500, "Старый комментарий")));
 
-        mockMvc.perform(put("/api/posts/1/comments/1")
+        mockMvc.perform(put("/api/posts/{postId}/comments/{commentId}", 1, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().isNotFound());
@@ -542,7 +542,7 @@ public class PostControllerTest {
         when(commentService.getComment(anyLong())).thenReturn(Optional.empty());
         when(commentService.editComment(anyLong(), any())).thenThrow(new CommentNotFoundException(100500));
 
-        mockMvc.perform(put("/api/posts/1/comments/100500")
+        mockMvc.perform(put("/api/posts/{postId}/comments/{commentId}", 1, 100500)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commentDataJson))
                 .andExpect(status().isNotFound());
@@ -557,7 +557,7 @@ public class PostControllerTest {
         when(commentService.getComment(anyLong())).thenReturn(Optional.of(new CommentDTO(1, 1, "Комментарий")));
         doNothing().when(commentService).deleteComment(anyLong());
 
-        mockMvc.perform(delete("/api/posts/1/comments/1"))
+        mockMvc.perform(delete("/api/posts/{postId}/comments/{commentId}", 1, 1))
                 .andExpect(status().isOk());
 
         verify(commentService, times(1)).getComment(1L);
@@ -569,7 +569,7 @@ public class PostControllerTest {
     void deleteComment_notPostComment() throws Exception {
         when(commentService.getComment(anyLong())).thenReturn(Optional.of(new CommentDTO(1, 100500, "Комментарий")));
 
-        mockMvc.perform(delete("/api/posts/1/comments/1"))
+        mockMvc.perform(delete("/api/posts/{postId}/comments/{commentId}", 1, 1))
                 .andExpect(status().isNotFound());
 
         verify(commentService, times(1)).getComment(1L);
@@ -581,7 +581,7 @@ public class PostControllerTest {
         when(commentService.getComment(anyLong())).thenReturn(Optional.empty());
         doNothing().when(commentService).deleteComment(anyLong());
 
-        mockMvc.perform(delete("/api/posts/1/comments/100500"))
+        mockMvc.perform(delete("/api/posts/{postId}/comments/{commentId}", 1, 100500))
                 .andExpect(status().isOk());
 
         verify(commentService, times(1)).getComment(100500L);
