@@ -1,6 +1,5 @@
 package com.github.dgaponov99.practicum.myblog.web;
 
-import com.github.dgaponov99.practicum.myblog.config.WebTestConfig;
 import com.github.dgaponov99.practicum.myblog.dto.CommentDTO;
 import com.github.dgaponov99.practicum.myblog.dto.PostDTO;
 import com.github.dgaponov99.practicum.myblog.dto.PostPageDTO;
@@ -10,18 +9,15 @@ import com.github.dgaponov99.practicum.myblog.exception.CommentNotFoundException
 import com.github.dgaponov99.practicum.myblog.exception.PostNotFoundException;
 import com.github.dgaponov99.practicum.myblog.service.CommentService;
 import com.github.dgaponov99.practicum.myblog.service.PostService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,25 +31,16 @@ import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebAppConfiguration
-@SpringJUnitConfig(classes = {WebTestConfig.class})
+@WebMvcTest(PostController.class)
 public class PostControllerTest {
 
     @Autowired
-    private WebApplicationContext wac;
-
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private CommentService commentService;
-
     private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-        reset(postService, commentService);
-    }
+    @MockitoBean
+    private PostService postService;
+    @MockitoBean
+    private CommentService commentService;
 
     @Test
     void searchPosts_ok() throws Exception {

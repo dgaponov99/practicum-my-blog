@@ -1,19 +1,14 @@
 package com.github.dgaponov99.practicum.myblog.service;
 
 
-import com.github.dgaponov99.practicum.myblog.config.ServiceTestConfig;
 import com.github.dgaponov99.practicum.myblog.dto.CommentDTO;
 import com.github.dgaponov99.practicum.myblog.dto.data.CommentDataDTO;
 import com.github.dgaponov99.practicum.myblog.exception.CommentNotFoundException;
 import com.github.dgaponov99.practicum.myblog.exception.PostNotFoundException;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Comment;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Post;
-import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
-import com.github.dgaponov99.practicum.myblog.persistence.repository.PostRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,21 +17,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringJUnitConfig(classes = {ServiceTestConfig.class})
-public class CommentServiceTest {
+public class CommentServiceTest extends ServiceBaseTest {
 
     @Autowired
     private CommentService commentService;
-
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @BeforeEach
-    public void setUp() {
-        reset(postRepository, commentRepository);
-    }
 
     @Test
     void getComment_success() {

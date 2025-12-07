@@ -2,7 +2,6 @@
 
 ### Требования:
 - jdk 21
-- tomcat 10
 - docker engine
 
 ### Настройка окружения
@@ -12,12 +11,14 @@
 
 ### Запуск тестов:
 - Запуск docker-engine
-- Вызов `mvnw clean test`
+- Вызов `gradlew clean test`
 
-### Установка:
-- Собрать WAR с помощью `mvnw clean package` (для прохождения тестов понадобится запущенный docker engine)
-- Запустить tomcat 10 с указанием JAVA_HOME='jdk-21-path'
-- Собранный ROOT.war поместить в `/tomcat/webapp` предварительно удалив изначальную директорию ROOT
+### Сборка jar:
+- Вызов `gradlew clean bootJar`
+- Собранный fat-jar находится в `/build/libs`
+
+### Локальный запуск:
+- Вызов `gradlew clean bootRun`
 - После установки API приложения доступно по `http://localhost:8080/`
 
 ### Запуск фронта
