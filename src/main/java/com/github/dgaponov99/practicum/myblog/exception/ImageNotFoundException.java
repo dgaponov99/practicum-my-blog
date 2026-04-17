@@ -5,7 +5,7 @@ import java.util.UUID;
 public class ImageNotFoundException extends Exception {
 
     public ImageNotFoundException(UUID imageUuid) {
-        super("Image with id " + imageUuid + " does not exist");
+        super("Image with id %s does not exist".formatted(imageUuid));
     }
 
 }

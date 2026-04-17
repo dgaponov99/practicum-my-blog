@@ -1,7 +1,5 @@
 package com.github.dgaponov99.practicum.myblog.repository;
 
-import com.github.dgaponov99.practicum.myblog.PostgresRepositoryTest;
-import com.github.dgaponov99.practicum.myblog.config.RepositoryITConfig;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Comment;
 import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.sql.Statement;
 import java.util.HashSet;
@@ -18,8 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {RepositoryITConfig.class})
-public class CommentRepositoryTest extends PostgresRepositoryTest {
+public class CommentRepositoryTest extends RepositoryBaseTest {
 
     @Autowired
     JdbcTemplate jdbcTemplate;

@@ -53,7 +53,7 @@ public class PostController {
         var postPage = postService.searchPosts(title.toString(), tags, pageNumber, pageSize);
         postPage.getPosts().forEach(post -> {
             if (post.getText().length() > searchTextLength) {
-                post.setText(post.getText().substring(0, searchTextLength) + "...");
+                post.setText("%s...".formatted(post.getText().substring(0, searchTextLength)));
             }
         });
         return ResponseEntity.ok(postPage);

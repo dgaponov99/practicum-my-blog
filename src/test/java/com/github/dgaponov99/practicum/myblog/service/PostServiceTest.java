@@ -1,19 +1,14 @@
 package com.github.dgaponov99.practicum.myblog.service;
 
 
-import com.github.dgaponov99.practicum.myblog.config.ServiceTestConfig;
 import com.github.dgaponov99.practicum.myblog.dto.PostDTO;
 import com.github.dgaponov99.practicum.myblog.dto.data.PostDataDTO;
 import com.github.dgaponov99.practicum.myblog.exception.PostNotFoundException;
 import com.github.dgaponov99.practicum.myblog.persistence.entity.Post;
-import com.github.dgaponov99.practicum.myblog.persistence.repository.CommentRepository;
-import com.github.dgaponov99.practicum.myblog.persistence.repository.PostRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,23 +17,10 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringJUnitConfig(classes = {ServiceTestConfig.class})
-public class PostServiceTest {
+public class PostServiceTest extends ServiceBaseTest {
 
     @Autowired
     private PostService postService;
-
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private PostImageService postImageService;
-
-    @BeforeEach
-    public void setUp() {
-        reset(postRepository, commentRepository, postImageService);
-    }
 
     @Test
     void searchPosts_firstPage() {
@@ -52,8 +34,8 @@ public class PostServiceTest {
         var postList = new ArrayList<Post>(size);
         var postDtoList = new ArrayList<PostDTO>(size);
         for (int i = 1; i <= count; i++) {
-            postList.add(new Post((long) i, "Заголовок " + i, "Текст " + i, i, null, Set.of("tag1", "tag2"), false));
-            postDtoList.add(new PostDTO(i, "Заголовок " + i, "Текст " + i, Set.of("tag1", "tag2"), i, 2));
+            postList.add(new Post((long) i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), i, null, Set.of("tag1", "tag2"), false));
+            postDtoList.add(new PostDTO(i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), Set.of("tag1", "tag2"), i, 2));
         }
 
 
@@ -86,8 +68,8 @@ public class PostServiceTest {
         var postList = new ArrayList<Post>(size);
         var postDtoList = new ArrayList<PostDTO>(size);
         for (int i = 1; i <= size; i++) {
-            postList.add(new Post((long) i, "Заголовок " + i, "Текст " + i, i, null, Set.of("tag1", "tag2"), false));
-            postDtoList.add(new PostDTO(i, "Заголовок " + i, "Текст " + i, Set.of("tag1", "tag2"), i, 2));
+            postList.add(new Post((long) i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), i, null, Set.of("tag1", "tag2"), false));
+            postDtoList.add(new PostDTO(i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), Set.of("tag1", "tag2"), i, 2));
         }
 
 
@@ -120,8 +102,8 @@ public class PostServiceTest {
         var postList = new ArrayList<Post>(size);
         var postDtoList = new ArrayList<PostDTO>(size);
         for (int i = 1; i < size; i++) {
-            postList.add(new Post((long) i, "Заголовок " + i, "Текст " + i, i, null, Set.of("tag1", "tag2"), false));
-            postDtoList.add(new PostDTO(i, "Заголовок " + i, "Текст " + i, Set.of("tag1", "tag2"), i, 2));
+            postList.add(new Post((long) i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), i, null, Set.of("tag1", "tag2"), false));
+            postDtoList.add(new PostDTO(i, "Заголовок %d".formatted(i), "Текст %d".formatted(i), Set.of("tag1", "tag2"), i, 2));
         }
 
 

@@ -37,7 +37,7 @@ public class PostJdbcRepository implements PostRepository {
         var sql = searchSql(headSql, title, tags, params);
         params.add(offset);
         params.add(size);
-        sql += " order by post_id desc offset ? rows fetch next ? rows only;";
+        sql = "%s order by post_id desc offset ? rows fetch next ? rows only;".formatted(sql);
         log.debug(sql);
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapPost(rs), params.toArray());
     }
@@ -50,7 +50,7 @@ public class PostJdbcRepository implements PostRepository {
                     from posts p
                 """;
         var params = new ArrayList<>();
-        var sql = searchSql(headSql, title, tags, params) + ") as posts;";
+        var sql = "%s) as posts;".formatted(searchSql(headSql, title, tags, params));
         log.debug(sql);
         return jdbcTemplate.queryForObject(sql, Integer.class, params.toArray());
     }
@@ -130,7 +130,7 @@ public class PostJdbcRepository implements PostRepository {
         sql.append(" where not p.deleted ");
 
         if (StringUtils.hasText(title)) {
-            params.add("%" + title + "%");
+            params.add("%%%s%%".formatted(title));
             sql.append(" and lower(p.title) like lower(?) ");
         }
 
